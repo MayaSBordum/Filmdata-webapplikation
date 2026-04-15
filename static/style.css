@@ -1,0 +1,29 @@
+body {
+    font-family: Georgia, serif;
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 2rem;
+}
+
+h1 {
+    color: #e94560;
+    letter-spacing: 0.1em;
+}
+
+.film-kort {
+    display: flex;
+    gap: 2rem;
+    max-width: 900px;
+    margin-top: 2rem;
+}
+
+.film-kort img {
+    width: 220px;
+    border-radius: 8px;
+}
+
+.rating {
+    color: #f5c518;
+    font-weight: bold;
+}

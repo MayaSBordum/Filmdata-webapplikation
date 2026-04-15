@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang='da'>
+
+<head>
+    <meta charset='UTF-8'>
+    <title>FilmData</title>
+    <link rel='stylesheet' href='/static/style.css'>
+</head>
+
+<body>
+    <h1>Films to watch</h1>
+    <div class='film-grid'>
+        {% for f in film %}
+        <div class='film-kort'>
+            <img src='https://image.tmdb.org/t/p/w342/{{ f.plakat }}' alt='{{ f.titel }}'>
+            <h3>{{ f.titel }}</h3>
+            <p>{{ f.aar }} — {{ f.rating }}/10</p>
+            <a href='/gem/{{ f.titel }}'>★ Gem som favorit</a>
+        </div>
+        {% endfor %}
+    </div>
+</body>    
+</html>
+
+
+
+<!--<div class='film-kort'>
+        Plakatbillede. Jinja2 indsætter værdien af film.plakat
+        <img src='https://image.tmdb.org/t/p/w500/{{ film.plakat }}' alt='{{ film.titel }}'>
+        <div class='film-info'>
+            <h2>{{ film.titel }}</h2>
+            <p class='aar'>{{ film.aar }}</p>
+            <p class='rating'>Vurdering: {{ film.rating }} / 10</p>
+            <p class='beskrivelse'>{{ film.beskrivelse }}</p>
+        </div>
+    </div> 
+-->
