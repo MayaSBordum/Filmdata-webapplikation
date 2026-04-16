@@ -1,29 +1,74 @@
+
 body {
     font-family: Georgia, serif;
-    background-color: #1a1a2e;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
     color: #e0e0e0;
     margin: 0;
     padding: 2rem;
+    line-height: 1.6;
 }
 
 h1 {
-    color: #e94560;
-    letter-spacing: 0.1em;
+    color: #a92138;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(169, 33, 56, 0.4);
+    display: inline-block;
+    padding-bottom: 0.3rem;
 }
 
 .film-kort {
     display: flex;
     gap: 2rem;
-    max-width: 900px;
-    margin-top: 2rem;
+    max-width: 80%;
+    margin: 2rem auto; /* THIS centers it */
+
+    background-color: rgba(255, 255, 255, 0.03);
+    padding: 1.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
 }
 
 .film-kort img {
     width: 220px;
-    border-radius: 8px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Text container */
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 70%;
+}
+
+/* Title inside card */
+.info h2 {
+    margin: 0;
+    color: #ffffff;
+}
+
+/* Metadata (year, genre etc.) */
+.meta {
+    font-size: 0.9rem;
+    color: #aaaaaa;
+    margin: 0.3rem 0 1rem 0;
+}
+
+/* Description */
+.description {
+    font-size: 0.95rem;
+    color: #cfcfcf;
+    line-height: 1.5;
+    margin-bottom: 1rem;
 }
 
 .rating {
     color: #f5c518;
     font-weight: bold;
+    font-size: 1.2rem;
 }

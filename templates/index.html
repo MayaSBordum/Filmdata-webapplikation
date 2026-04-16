@@ -13,25 +13,22 @@
         {% for f in film %}
         <div class='film-kort'>
             <img src='https://image.tmdb.org/t/p/w342/{{ f.plakat }}' alt='{{ f.titel }}'>
-            <h3>{{ f.titel }}</h3>
-            <p>{{ f.aar }} — {{ f.rating }}/10</p>
-            <a href='/gem/{{ f.titel }}'>★ Gem som favorit</a>
+            <div class="info">
+                <div>
+                    <h3>{{ f.titel }}</h3>
+                    <p><div class="meta">{{ f.aar }} — {{ f.rating }}/10 ⭐ — {{ f.genres }}</div></p>
+                    <p class="description">
+                        <a href="{{ f.homepage }}">{{ f.homepage }}</a><br>
+                        {{ f.beskrivelse }}
+                    </p>
+                    <a href='/gem/{{ f.titel }}'>★ Gem som favorit</a>
+                </div>
+            </div>
         </div>
         {% endfor %}
     </div>
-</body>    
+</body>
+
 </html>
 
 
-
-<!--<div class='film-kort'>
-        Plakatbillede. Jinja2 indsætter værdien af film.plakat
-        <img src='https://image.tmdb.org/t/p/w500/{{ film.plakat }}' alt='{{ film.titel }}'>
-        <div class='film-info'>
-            <h2>{{ film.titel }}</h2>
-            <p class='aar'>{{ film.aar }}</p>
-            <p class='rating'>Vurdering: {{ film.rating }} / 10</p>
-            <p class='beskrivelse'>{{ film.beskrivelse }}</p>
-        </div>
-    </div> 
--->

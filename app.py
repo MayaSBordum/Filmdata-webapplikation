@@ -15,7 +15,7 @@ opret_tabel()
 def forside():
     # Filtrer rækker med gyldige ratings og poster_path, sorter
     filmliste = (
-        df[(df['vote_average'] > 0) & (df['poster_path'].notna())]
+        df[(df['vote_average'] > 0) & (df['poster_path'].notna()) & (df['vote_count'] > 100)]
         .sort_values('vote_average', ascending=False)
         .head(20)
     )
@@ -28,6 +28,31 @@ def forside():
             'rating': film['vote_average'],
             'aar': str(film['release_date'])[:4] if pd.notna(film['release_date']) else 'Unknown',
             'plakat': film['poster_path'],
+            'genres': film['genres'] if pd.notna(film['genres']) else 'No genres available.',
+            
+            'beskrivelse': film['overview'] if pd.notna(film['overview']) else 'No description available.',
+            
+            'adult': film['adult'] if pd.notna(film['adult']) else 'Unknown',
+            'collection': film['belongs_to_collection'] if pd.notna(film['belongs_to_collection']) else 'Unknown',
+            'budget': film['budget'] if pd.notna(film['budget']) else 'Unknown',
+            'homepage': film['homepage'] if pd.notna(film['homepage']) else 'Unknown',
+            'id': film['id'] if pd.notna(film['id']) else 'Unknown',
+            'imdb_id': film['imdb_id'] if pd.notna(film['imdb_id']) else 'Unknown',
+            'original_language': film['original_language'] if pd.notna(film['original_language']) else 'Unknown',
+            'original_title': film['original_title'] if pd.notna(film['original_title']) else 'Unknown',
+            'popularity': film['popularity'] if pd.notna(film['popularity']) else 'Unknown',
+            'production_companies': film['production_companies'] if pd.notna(film['production_companies']) else 'Unknown',
+            'production_countries': film['production_countries'] if pd.notna(film['production_countries']) else 'Unknown',
+            'release_date': film['release_date'] if pd.notna(film['release_date']) else 'Unknown',
+            'revenue': film['revenue'] if pd.notna(film['revenue']) else 'Unknown',
+            'runtime': film['runtime'] if pd.notna(film['runtime']) else 'Unknown',
+            'spoken_languages': film['spoken_languages'] if pd.notna(film['spoken_languages']) else 'Unknown',
+            'status': film['status'] if pd.notna(film['status']) else 'Unknown',
+            'tagline': film['tagline'] if pd.notna(film['tagline']) else 'Unknown',
+            'title': film['title'] if pd.notna(film['title']) else 'Unknown',
+            'video': film['video'] if pd.notna(film['video']) else 'Unknown',
+            'vote_average': film['vote_average'] if pd.notna(film['vote_average']) else 'Unknown',
+            'vote_count': film['vote_count'] if pd.notna(film['vote_count']) else 'Unknown'
         })
 
     return render_template('index.html', film=film_data)
@@ -50,4 +75,4 @@ def vis_favoritter():
     return render_template('favoritter.html', film=film)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=8000)
