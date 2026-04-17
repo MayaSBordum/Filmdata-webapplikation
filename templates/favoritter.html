@@ -1,25 +1,30 @@
 <!DOCTYPE html>
-<html lang='da'>
+<html lang="da">
 
 <head>
-    <meta charset='UTF-8'>
+    <meta charset="UTF-8">
     <title>Mine favoritter</title>
-    <link rel='stylesheet' href='/static/style.css'>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 
-<body>
+<body id="top">
     <h1>Mine favoritter</h1>
-    <a href='/'>Tilbage til forsiden</a>
-    <div class='film-grid'>
+    <p class="mine-favoritter"><a href="/">Tilbage til forsiden</a></p>
+    
+    <div class="film-grid">
         {% for f in film %}
-        <div class='film-kort'>
-            <img src='https://image.tmdb.org/t/p/w342/{{ f[2] }}' alt='{{
-f[1] }}'>
+        <div class="film-kort">
+            <img src="https://image.tmdb.org/t/p/w342/{{ f[2] }}" alt="{{ f[1] }}">
             <h3>{{ f[1] }}</h3>
             <p>{{ f[4] }} — {{ f[3] }}/10</p>
+            
+            <p class="gem-favorite-link">
+                <a href="/fjern/{{ f[1] }}"> ❌ Fjern fra favoritter</a>
+            </p>
         </div>
         {% endfor %}
     </div>
-</body>
 
+    <p class="top-link"><a href="#top">Tilbage til toppen</a></p>
+</body>
 </html>

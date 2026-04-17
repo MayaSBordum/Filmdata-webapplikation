@@ -13,7 +13,12 @@ def opret_tabel():
                     titel TEXT NOT NULL,
                     plakat_url TEXT,
                     rating REAL,
-                    aar TEXT
+                    aar TEXT,
+                    original_language TEXT,
+                    runtime INTEGER,
+                    genres TEXT,
+                    beskrivelse TEXT,
+                    homepage TEXT
                     )
                     ''')
     con.commit()

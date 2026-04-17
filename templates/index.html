@@ -9,6 +9,7 @@
 
 <body>
     <h1>Films to watch</h1>
+    <p class="mine-favoritter"><a href="favoritter">Gå til favoritter</a></p>
     <div class='film-grid'>
         {% for f in film %}
         <div class='film-kort'>
@@ -16,19 +17,20 @@
             <div class="info">
                 <div>
                     <h3>{{ f.titel }}</h3>
-                    <p><div class="meta">{{ f.aar }} — {{ f.rating }}/10 ⭐ — {{ f.genres }}</div></p>
-                    <p class="description">
-                        <a href="{{ f.homepage }}">{{ f.homepage }}</a><br>
-                        {{ f.beskrivelse }}
+                    <p>
+                    <div class="meta"> Year: {{ f.aar }} ✦ Original Language: {{ f.original_language }} ✦ Runtime: {{
+                        f.runtime }} min ✦ Genres:{{ f.genres }}</div>
                     </p>
-                    <a href='/gem/{{ f.titel }}'>★ Gem som favorit</a>
+                    <p class="description">{{ f.beskrivelse }}
+                    </p>
+                    <p class="rating"> Rating: {{ f.rating }}/10 ⭐</p>
+                    <p class="gem-favorite-link"><a href='/gem/{{ f.titel }}'>★ Gem som favorit</a></p>
+                    <p><a href="{{ f.homepage }}">{{ f.homepage }}</a><br></p>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+     <p class="top-link"><a href="#top">Tilbage til toppen</a></p>
 </body>
-
 </html>
-
-

@@ -9,7 +9,7 @@ body {
 }
 
 h1 {
-    color: #a92138;
+    color: #b6253d;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 1.5rem;
@@ -69,6 +69,29 @@ h1 {
 
 .rating {
     color: #f5c518;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.gem-favorite-link {
+    float: right;
+    color: #3990b9;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.top-link {
+    float: right;
+    margin: 2rem auto;
+    color: #3990b9;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.mine-favoritter{
+    float: right;
+    margin: 2rem auto;
+    color: #da241e;
     font-weight: bold;
     font-size: 1.2rem;
 }
