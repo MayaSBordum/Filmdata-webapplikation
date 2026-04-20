@@ -34,6 +34,16 @@ def gem_favorit(titel, plakat_url, rating, aar):
     con.commit()
     con.close()
 
+def fjern_favorit(titel):
+    """Fjerner en film fra favoritter baseret på titel."""
+    con = get_connection()
+    con.execute(
+        'DELETE FROM favoritter WHERE titel = ?',
+        (titel,)
+    )
+    con.commit()
+    con.close()
+
 def hent_favoritter():
     """Returnerer alle gemte favoritter som en liste."""
     con = get_connection()

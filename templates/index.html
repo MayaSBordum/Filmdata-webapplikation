@@ -24,13 +24,48 @@
                     <p class="description">{{ f.beskrivelse }}
                     </p>
                     <p class="rating"> Rating: {{ f.rating }}/10 ⭐</p>
-                    <p class="gem-favorite-link"><a href='/gem/{{ f.titel }}'>★ Gem som favorit</a></p>
-                    <p><a href="{{ f.homepage }}">{{ f.homepage }}</a><br></p>
+
+                    {% if f.homepage %}
+                    <p>
+                        <a href="{{ f.homepage }}" target="_blank">
+                            {{ f.homepage }}
+                        </a>
+                    </p>
+                    {% endif %}
+
+                    <p class="gem-favorite-link"> <button onclick="gemFavorit('{{ f.titel }}')">★ Gem som
+                            favorit</button></p>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
-     <p class="top-link"><a href="#top">Tilbage til toppen</a></p>
+    <p class="top-link"><a href="#top">Tilbage til toppen</a></p>
+
+
+    <div id="toast" class="toast"></div>
+    <script>
+        function gemFavorit(titel) {
+            fetch(`/gem/${encodeURIComponent(titel)}`)
+                .then(response => {
+                    if (response.ok) {
+                        showToast("Gemt som favorit ⭐");
+                    } else {
+                        showToast("Noget gik galt ❌");
+                    }
+                });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.classList.add("show");
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+    </script>
 </body>
+
 </html>

@@ -1,4 +1,4 @@
-
+/* Layout */
 body {
     font-family: Georgia, serif;
     background: linear-gradient(135deg, #1a1a2e, #16213e);
@@ -46,7 +46,6 @@ h1 {
     max-width: 70%;
 }
 
-/* Title inside card */
 .info h2 {
     margin: 0;
     color: #ffffff;
@@ -59,7 +58,6 @@ h1 {
     margin: 0.3rem 0 1rem 0;
 }
 
-/* Description */
 .description {
     font-size: 0.95rem;
     color: #cfcfcf;
@@ -73,13 +71,31 @@ h1 {
     font-size: 1rem;
 }
 
+/* Favorite */
 .gem-favorite-link {
-    float: right;
-    color: #3990b9;
-    font-weight: bold;
-    font-size: 1rem;
+    text-align: right; /* bedre end float */
 }
 
+.gem-favorite-link button {
+    background-color: #05344a;
+    color: rgb(204, 204, 204);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+.gem-favorite-link button:hover {
+    background-color: #0b4a68;
+    transform: translateY(-1px);
+}
+
+/* Links på sidden */
 .top-link {
     float: right;
     margin: 2rem auto;
@@ -94,4 +110,29 @@ h1 {
     color: #da241e;
     font-weight: bold;
     font-size: 1.2rem;
+}
+
+/* Toasts */
+.toast {
+    visibility: hidden;
+    min-width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 12px;
+    
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
 }

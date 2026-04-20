@@ -8,7 +8,7 @@ app = Flask(__name__)
 # Indlæs CSV én gang når appen starter
 df = pd.read_csv('movies_metadata.csv', low_memory=False)
 
-from database import opret_tabel, gem_favorit, hent_favoritter
+from database import opret_tabel, gem_favorit, hent_favoritter, fjern_favorit
 
 # Kald dette én gang når appen starter
 opret_tabel()
@@ -68,44 +68,17 @@ def gem(titel):
     )
     return f'{titel} er gemt som favorit!'
 
-    #film = hent_favoritter()
-    #return render_template('favoritter.html', film=film)
-
 @app.route('/favoritter')
 def vis_favoritter():
     film = hent_favoritter()
     return render_template('favoritter.html', film=film)
-    conn = sqlite3.connect('favoritter.db')
-    conn.row_factory = sqlite3.Row  # 👈 THIS is key
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM favoritter")
-    rows = cursor.fetchall()
-
-    film_data = []
-    for row in rows:
-        film_data.append({
-            'titel': row['titel'],
-            'plakat': row['plakat'],
-            'aar': row['aar'],
-            'rating': row['rating'],
-            'original_language': row['original_language'],
-            'runtime': row['runtime'],
-            'genres': row['genres'],
-            'beskrivelse': row['beskrivelse'],
-            'homepage': row['homepage']
-        })
-
-    conn.close()
-
-    return render_template('favoritter.html', film=film_data)
 
 @app.route('/fjern/<titel>')
 def fjern(titel):
     # Fjern fra database / liste
     print("Fjerner:", titel)
-    
-    return redirect('/')
+    fjern_favorit(titel)
+    return '', 200
 
 
 if __name__ == '__main__':

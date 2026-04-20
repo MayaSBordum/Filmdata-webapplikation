@@ -10,21 +10,51 @@
 <body id="top">
     <h1>Mine favoritter</h1>
     <p class="mine-favoritter"><a href="/">Tilbage til forsiden</a></p>
-    
+
     <div class="film-grid">
         {% for f in film %}
         <div class="film-kort">
             <img src="https://image.tmdb.org/t/p/w342/{{ f[2] }}" alt="{{ f[1] }}">
             <h3>{{ f[1] }}</h3>
             <p>{{ f[4] }} — {{ f[3] }}/10</p>
-            
+
             <p class="gem-favorite-link">
-                <a href="/fjern/{{ f[1] }}"> ❌ Fjern fra favoritter</a>
+                <button onclick="fjernFavorit(event, '{{ f[1] }}')">
+                    ❌ Fjern fra favoritter
+                </button>
             </p>
         </div>
         {% endfor %}
     </div>
 
     <p class="top-link"><a href="#top">Tilbage til toppen</a></p>
+
+    <div id="toast" class="toast"></div>
+    <script>
+        function fjernFavorit(event,titel) {
+            fetch(`/fjern/${encodeURIComponent(titel)}`)
+                .then(res => {
+                    if (res.ok) {
+                        showToast("Fjernet ❌");
+
+                        // fjern filmkort fra siden
+                        event.target.closest('.film-kort').remove();
+                    } else {
+                        showToast("Fejl ❌");
+                    }
+                });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.classList.add("show");
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+    </script>
 </body>
+
 </html>
