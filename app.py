@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify, request
 import pandas as pd
 import sqlite3
 from flask import redirect
@@ -12,6 +12,31 @@ from database import opret_tabel, gem_favorit, hent_favoritter, fjern_favorit
 
 # Kald dette én gang når appen starter
 opret_tabel()
+
+def find_films(query, limit=50):
+    query = query.strip()
+    if not query:
+        return []
+
+    filter_title = df['title'].fillna('').str.contains(query, case=False, na=False)
+    filter_original_title = df['original_title'].fillna('').str.contains(query, case=False, na=False)
+    result_df = df[filter_title | filter_original_title].sort_values('vote_average', ascending=False).head(limit)
+
+    films = []
+    for _, film in result_df.iterrows():
+        films.append({
+            'titel': film['title'],
+            'rating': film['vote_average'],
+            'aar': str(film['release_date'])[:4] if pd.notna(film['release_date']) else 'Unknown',
+            'plakat': film['poster_path'],
+            'genres': film['genres'] if pd.notna(film['genres']) else 'No genres available.',
+            'beskrivelse': film['overview'] if pd.notna(film['overview']) else 'No description available.',
+            'original_language': film['original_language'] if pd.notna(film['original_language']) else 'Unknown',
+            'homepage': film['homepage'] if pd.notna(film['homepage']) and film['homepage'] != '' else None,
+            'runtime': int(film['runtime']) if pd.notna(film['runtime']) else 'Unknown'
+        })
+
+    return films
 
 @app.route('/')
 def forside():
@@ -64,7 +89,12 @@ def gem(titel):
         titel=film['title'],
         plakat_url=film['poster_path'],
         rating=film['vote_average'],
-        aar=str(film['release_date'])[:4]
+        aar=str(film['release_date'])[:4],
+        original_language=film['original_language'] if pd.notna(film['original_language']) else 'Unknown',
+        runtime=int(film['runtime']) if pd.notna(film['runtime']) else 'Unknown',
+        genres=film['genres'] if pd.notna(film['genres']) else 'No genres available.',
+        beskrivelse=film['overview'] if pd.notna(film['overview']) else 'No description available.',
+        homepage=film['homepage'] if pd.notna(film['homepage']) and film['homepage'] != '' else None
     )
     return f'{titel} er gemt som favorit!'
 
@@ -73,6 +103,21 @@ def vis_favoritter():
     film = hent_favoritter()
     return render_template('favoritter.html', film=film)
 
+@app.route('/api/search/html')
+def api_search_html():
+    query = request.args.get('query', '').strip()
+    if not query:
+        return '<p class="message">Indtast venligst en søgeterm.</p>'
+
+    films = find_films(query)
+    if not films:
+        return '<p class="message">Ingen film fundet.</p>'
+
+    html = ''
+    for f in films:
+        html += render_template('film_card.html', f=f)
+    return html
+
 @app.route('/fjern/<titel>')
 def fjern(titel):
     # Fjern fra database / liste
@@ -80,6 +125,11 @@ def fjern(titel):
     fjern_favorit(titel)
     return '', 200
 
+@app.route('/søg')
+def søg():
+    query = request.args.get('query', '').strip()
+    films = find_films(query) if query else None
+    return render_template('søg.html', film=films, query=query)
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)

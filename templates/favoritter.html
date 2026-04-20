@@ -1,28 +1,54 @@
 <!DOCTYPE html>
-<html lang="da">
+<html lang='da'>
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset='UTF-8'>
     <title>Mine favoritter</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel='stylesheet' href='/static/style.css'>
 </head>
 
-<body id="top">
+<body id='top'>
     <h1>Mine favoritter</h1>
     <p class="mine-favoritter"><a href="/">Tilbage til forsiden</a></p>
-
     <div class="film-grid">
         {% for f in film %}
         <div class="film-kort">
             <img src="https://image.tmdb.org/t/p/w342/{{ f[2] }}" alt="{{ f[1] }}">
-            <h3>{{ f[1] }}</h3>
-            <p>{{ f[4] }} — {{ f[3] }}/10</p>
 
-            <p class="gem-favorite-link">
-                <button onclick="fjernFavorit(event, '{{ f[1] }}')">
-                    ❌ Fjern fra favoritter
-                </button>
-            </p>
+            <div class="info">
+                <div>
+                    <h3>{{ f[1] }}</h3>
+
+                    <div class="meta">
+                        Year: {{ f[4] }} ✦
+                        Original Language: {{ f[5] }} ✦
+                        Runtime: {{ f[6] }} min ✦
+                        Genres: {{ f[7] }}
+                    </div>
+
+                    <p class="description">
+                        {{ f[8] }}
+                    </p>
+
+                    <p class="rating">
+                        Rating: {{ f[3] }}/10 ⭐
+                    </p>
+
+                    {% if f[9] %}
+                    <p>
+                        <a href="{{ f[9] }}" target="_blank">
+                            {{ f[9] }}
+                        </a>
+                    </p>
+                    {% endif %}
+
+                    <p class="gem-favorite-link">
+                        <button onclick="fjernFavorit(event, '{{ f[1] }}')">
+                            ❌ Fjern fra favoritter
+                        </button>
+                    </p>
+                </div>
+            </div>
         </div>
         {% endfor %}
     </div>
@@ -31,7 +57,7 @@
 
     <div id="toast" class="toast"></div>
     <script>
-        function fjernFavorit(event,titel) {
+        function fjernFavorit(event, titel) {
             fetch(`/fjern/${encodeURIComponent(titel)}`)
                 .then(res => {
                     if (res.ok) {

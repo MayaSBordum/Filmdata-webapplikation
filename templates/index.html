@@ -7,43 +7,77 @@
     <link rel='stylesheet' href='/static/style.css'>
 </head>
 
+<!-- Film layout -->
 <body>
     <h1>Films to watch</h1>
+
+    <!-- Link til favoritter-siden -->
     <p class="mine-favoritter"><a href="favoritter">Gå til favoritter</a></p>
-    <div class='film-grid'>
+
+    <!-- Søgefelt hvor brugeren kan søge efter film -->
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Indtast filmtitel...">
+        <button onclick="search()">Søg</button>
+    </div>
+    <div id="results" class="results"></div>
+
+    <!-- Grid med film-kort, der viser de bedste film -->
+    <div id="filmGrid" class='film-grid'>
         {% for f in film %}
-        <div class='film-kort'>
-            <img src='https://image.tmdb.org/t/p/w342/{{ f.plakat }}' alt='{{ f.titel }}'>
-            <div class="info">
-                <div>
-                    <h3>{{ f.titel }}</h3>
-                    <p>
-                    <div class="meta"> Year: {{ f.aar }} ✦ Original Language: {{ f.original_language }} ✦ Runtime: {{
-                        f.runtime }} min ✦ Genres:{{ f.genres }}</div>
-                    </p>
-                    <p class="description">{{ f.beskrivelse }}
-                    </p>
-                    <p class="rating"> Rating: {{ f.rating }}/10 ⭐</p>
-
-                    {% if f.homepage %}
-                    <p>
-                        <a href="{{ f.homepage }}" target="_blank">
-                            {{ f.homepage }}
-                        </a>
-                    </p>
-                    {% endif %}
-
-                    <p class="gem-favorite-link"> <button onclick="gemFavorit('{{ f.titel }}')">★ Gem som
-                            favorit</button></p>
-                </div>
-            </div>
-        </div>
+        {% include 'film_card.html' %}
         {% endfor %}
     </div>
+
+    <!-- Link tilbage til toppen af siden -->
     <p class="top-link"><a href="#top">Tilbage til toppen</a></p>
-
-
+    <!-- Toast-besked, der dukker op når noget sker (f.eks. gemt som favorit) -->
     <div id="toast" class="toast"></div>
+
+    <!-- JavaScript-kode for søgefunktionalitet -->
+    <script>
+        const filmGrid = document.getElementById('filmGrid');
+        const searchInput = document.getElementById('searchInput');
+
+        searchInput.addEventListener('input', function () {
+            if (!this.value.trim()) {
+                document.getElementById('results').innerHTML = '';
+                filmGrid.style.display = '';
+            }
+        });
+
+        searchInput.addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                search();
+            }
+        });
+
+        // Funktion til at søge efter film
+        function search() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsDiv = document.getElementById('results');
+
+            if (!query) {
+                resultsDiv.innerHTML = '<p class="message"></p>';
+                filmGrid.style.display = '';
+                return;
+            }
+
+            filmGrid.style.display = 'none';
+            resultsDiv.innerHTML = '<p class="message">Søger...</p>';
+
+            // Send søgning til serveren og få HTML tilbage
+            fetch(`/api/search/html?query=${encodeURIComponent(query)}`)
+                .then(response => response.text())
+                .then(html => {
+                    resultsDiv.innerHTML = html;
+                })
+                .catch(() => {
+                    resultsDiv.innerHTML = '<p class="message">Der skete en fejl under søgningen.</p>';
+                });
+        }
+    </script>
+
+    <!-- JavaScript-kode for favoritter-funktionalitet -->
     <script>
         function gemFavorit(titel) {
             fetch(`/gem/${encodeURIComponent(titel)}`)
@@ -56,6 +90,7 @@
                 });
         }
 
+        // Funktion til at vise en toast-besked
         function showToast(message) {
             const toast = document.getElementById("toast");
             toast.innerText = message;

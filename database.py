@@ -24,12 +24,12 @@ def opret_tabel():
     con.commit()
     con.close()
 
-def gem_favorit(titel, plakat_url, rating, aar):
+def gem_favorit(titel, plakat_url, rating, aar, original_language, runtime, genres, beskrivelse, homepage):
     """Gemmer en film som favorit."""
     con = get_connection()
     con.execute(
-        'INSERT INTO favoritter (titel, plakat_url, rating, aar) VALUES(?, ?, ?, ?)',
-        (titel, plakat_url, rating, aar)
+        'INSERT INTO favoritter (titel, plakat_url, rating, aar, original_language, runtime, genres, beskrivelse, homepage) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        (titel, plakat_url, rating, aar, original_language, runtime, genres, beskrivelse, homepage)
         )
     con.commit()
     con.close()

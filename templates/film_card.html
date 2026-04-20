@@ -1,0 +1,23 @@
+<div class='film-kort'>
+    <img src='https://image.tmdb.org/t/p/w342/{{ f.plakat }}' alt='{{ f.titel }}'>
+    <div class="info">
+        <div>
+            <h3>{{ f.titel }}</h3>
+            <div>
+                <p class="meta"> Year: {{ f.aar }} ✦ Original Language: {{ f.original_language }} ✦ Runtime: {{ f.runtime }} min ✦ Genres: {{ f.genres }}</p>
+            </div>
+            <p class="description">{{ f.beskrivelse }}</p>
+            <p class="rating"> Rating: {{ f.rating }}/10 ⭐</p>
+
+            {% if f.homepage %}
+            <p>
+                <a href="{{ f.homepage }}" target="_blank">
+                    {{ f.homepage }}
+                </a>
+            </p>
+            {% endif %}
+
+            <p class="gem-favorite-link"><button onclick="gemFavorit('{{ f.titel }}')">★ Gem som favorit</button></p>
+        </div>
+    </div>
+</div>

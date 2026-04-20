@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Søg</title>
+    <link rel='stylesheet' href='/static/style.css'>
+</head>
+
+
+<body>
+    <h1>Søg efter film</h1>
+    <form class="search-container" method="get" action="/søg">
+        <input type="text" id="searchInput" name="query" value="{{ query | default('') }}"
+            placeholder="Indtast filmtitel...">
+        <button type="submit">Søg</button>
+    </form>
+
+    <div id="results" class="results">
+        {% if query %}
+        {% if film %}
+        <div class="film-grid">
+            {% for f in film %}
+            {% include 'film_card.html' %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="message">Ingen film fundet.</p>
+        {% endif %}
+        {% endif %}
+    </div>
+</body>
+
+</html>

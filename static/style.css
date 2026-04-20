@@ -22,7 +22,8 @@ h1 {
     display: flex;
     gap: 2rem;
     max-width: 80%;
-    margin: 2rem auto; /* THIS centers it */
+    margin: 2rem auto;
+    /* THIS centers it */
 
     background-color: rgba(255, 255, 255, 0.03);
     padding: 1.5rem;
@@ -73,7 +74,8 @@ h1 {
 
 /* Favorite */
 .gem-favorite-link {
-    text-align: right; /* bedre end float */
+    text-align: right;
+    /* bedre end float */
 }
 
 .gem-favorite-link button {
@@ -104,7 +106,7 @@ h1 {
     font-size: 1rem;
 }
 
-.mine-favoritter{
+.mine-favoritter {
     float: right;
     margin: 2rem auto;
     color: #da241e;
@@ -121,12 +123,12 @@ h1 {
     text-align: center;
     border-radius: 8px;
     padding: 12px;
-    
+
     position: fixed;
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    
+
     z-index: 1000;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -135,4 +137,39 @@ h1 {
 .toast.show {
     visibility: visible;
     opacity: 1;
+}
+
+
+
+
+/* Search */
+.search-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.results {
+    margin-top: 20px;
 }
