@@ -1,0 +1,10 @@
+0 = id  
+1 = titel  
+2 = plakat_url  
+3 = rating  
+4 = aar  
+5 = original_language  
+6 = runtime  
+7 = genres  
+8 = beskrivelse  
+9 = homepage  
