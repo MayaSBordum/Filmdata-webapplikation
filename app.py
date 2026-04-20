@@ -39,14 +39,29 @@ def find_films(query, limit=50):
     return films
 
 @app.route('/')
-def forside():
+@app.route('/<int:page>')
+def forside(page=1):
     # Filtrer rækker med gyldige ratings og poster_path, sorter
-    filmliste = (
+    alle_film = (
         df[(df['vote_average'] > 0) & (df['poster_path'].notna()) & (df['vote_count'] > 100)]
         .sort_values('vote_average', ascending=False)
-        .head(20)
     )
-
+    
+    # Pagination settings
+    films_per_page = 20
+    total_films = len(alle_film)
+    total_pages = (total_films + films_per_page - 1) // films_per_page
+    
+    # Ensure page is valid
+    if page < 1:
+        page = 1
+    if page > total_pages and total_pages > 0:
+        page = total_pages
+    
+    # Get films for current page
+    start_idx = (page - 1) * films_per_page
+    end_idx = start_idx + films_per_page
+    filmliste = alle_film.iloc[start_idx:end_idx]
 
     # Byg en liste af dictionaries som HTML-skabelonen kan bruge
     film_data = []
@@ -79,7 +94,7 @@ def forside():
             #'video': film['video'] if pd.notna(film['video']) else 'Unknown'
         })
 
-    return render_template('index.html', film=film_data)
+    return render_template('index.html', film=film_data, current_page=page, total_pages=total_pages)
 
 @app.route('/gem/<titel>')
 def gem(titel):

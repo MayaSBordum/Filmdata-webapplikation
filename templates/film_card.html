@@ -4,9 +4,10 @@
         <div>
             <h3>{{ f.titel }}</h3>
             <div>
-                <p class="meta"> Year: {{ f.aar }} ✦ Original Language: {{ f.original_language }} ✦ Runtime: {{ f.runtime }} min ✦ Genres: {{ f.genres }}</p>
+                <p class="meta"> Year: {{ f.aar }} ✦ Original Language: {{ f.original_language }} ✦ Runtime: {{ f.runtime }} min</p>
             </div>
             <p class="description">{{ f.beskrivelse }}</p>
+            <p class="meta"> Genres: {{ f.genres }}</p>
             <p class="rating"> Rating: {{ f.rating }}/10 ⭐</p>
 
             {% if f.homepage %}

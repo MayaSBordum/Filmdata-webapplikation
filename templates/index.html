@@ -28,6 +28,41 @@
         {% endfor %}
     </div>
 
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div class="pagination">
+        {% if current_page > 1 %}
+        <a href="/" class="page-link">« Første</a>
+        <a href="/{{ current_page - 1 }}" class="page-link">< Forrige</a>
+        {% endif %}
+        
+        {% set start_page = [1, current_page - 4] | max %}
+        {% set end_page = [start_page + 8, total_pages] | min %}
+        {% set start_page = [1, end_page - 8] | max %}
+        
+        {% if start_page > 1 %}
+        <span class="page-ellipsis">...</span>
+        {% endif %}
+        
+        {% for page_num in range(start_page, end_page + 1) %}
+            {% if page_num == current_page %}
+            <span class="page-number active">{{ page_num }}</span>
+            {% else %}
+            <a href="/{{ page_num }}" class="page-number">{{ page_num }}</a>
+            {% endif %}
+        {% endfor %}
+        
+        {% if end_page < total_pages %}
+        <span class="page-ellipsis">...</span>
+        {% endif %}
+        
+        {% if current_page < total_pages %}
+        <a href="/{{ current_page + 1 }}" class="page-link">Næste ></a>
+        <a href="/{{ total_pages }}" class="page-link">Sidste »</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
     <!-- Link tilbage til toppen af siden -->
     <p class="top-link"><a href="#top">Tilbage til toppen</a></p>
     <!-- Toast-besked, der dukker op når noget sker (f.eks. gemt som favorit) -->
