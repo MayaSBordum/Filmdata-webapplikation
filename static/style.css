@@ -39,6 +39,7 @@ h1 {
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
 }
 
+
 /* Text container */
 .info {
     display: flex;
@@ -51,6 +52,7 @@ h1 {
     margin: 0;
     color: #ffffff;
 }
+
 
 /* Metadata (year, genre etc.) */
 .meta {
@@ -71,6 +73,7 @@ h1 {
     font-weight: bold;
     font-size: 1rem;
 }
+
 
 /* Favorite */
 .gem-favorite-link {
@@ -97,6 +100,7 @@ h1 {
     transform: translateY(-1px);
 }
 
+
 /* Links på sidden */
 .top-link {
     float: right;
@@ -113,6 +117,7 @@ h1 {
     font-weight: bold;
     font-size: 1.2rem;
 }
+
 
 /* Toasts */
 .toast {
@@ -140,8 +145,6 @@ h1 {
 }
 
 
-
-
 /* Search */
 .search-container {
     display: flex;
@@ -159,7 +162,7 @@ input {
 
 button {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #0b519c;
     color: white;
     border: none;
     border-radius: 4px;
@@ -167,12 +170,13 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #0b67ca;
 }
 
 .results {
     margin-top: 20px;
 }
+
 
 /* Pagination styling */
 .pagination {

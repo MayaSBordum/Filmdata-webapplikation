@@ -1,7 +1,7 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, request
 import pandas as pd
-import sqlite3
-from flask import redirect
+import json
+import ast
 
 app = Flask(__name__)
 
@@ -13,6 +13,52 @@ from database import opret_tabel, gem_favorit, hent_favoritter, fjern_favorit
 # Kald dette én gang når appen starter
 opret_tabel()
 
+def parse_genres(genres_str):
+    """Parse genres field and return comma-separated names."""
+    if not pd.notna(genres_str) or genres_str == '':
+        return 'No genres available.'
+    genres_list = None
+    try:
+        genres_list = ast.literal_eval(genres_str)
+    except Exception:
+        try:
+            genres_list = json.loads(genres_str)
+        except Exception:
+            return 'No genres available.'
+    if not isinstance(genres_list, list):
+        return 'No genres available.'
+    genre_names = [g.get('name') for g in genres_list if isinstance(g, dict) and 'name' in g]
+    return ', '.join(genre_names) if genre_names else 'No genres available.'
+
+
+def movie_dict(film):
+    """Return a reusable film dictionary from a dataframe row."""
+    return {
+        'titel': film['title'],
+        'rating': film['vote_average'],
+        'aar': str(film['release_date'])[:4] if pd.notna(film['release_date']) else 'Unknown',
+        'plakat': film['poster_path'],
+        'genres': parse_genres(film['genres']),
+        'beskrivelse': film['overview'] if pd.notna(film['overview']) else 'No description available.',
+        'original_language': film['original_language'] if pd.notna(film['original_language']) else 'Unknown',
+        'homepage': film['homepage'] if pd.notna(film['homepage']) and film['homepage'] != '' else None,
+        'runtime': int(film['runtime']) if pd.notna(film['runtime']) else 'Unknown'
+            #'adult': film['adult'] if pd.notna(film['adult']) else 'Unknown',
+            #'collection': film['belongs_to_collection'] if pd.notna(film['belongs_to_collection']) else 'Unknown',
+            #'budget': film['budget'] if pd.notna(film['budget']) else 'Unknown',
+            #'id': film['id'] if pd.notna(film['id']) else 'Unknown',
+            #imdb_id': film['imdb_id'] if pd.notna(film['imdb_id']) else 'Unknown',
+            #'original_title': film['original_title'] if pd.notna(film['original_title']) else 'Unknown',
+            #'popularity': film['popularity'] if pd.notna(film['popularity']) else 'Unknown',
+            #'production_companies': film['production_companies'] if pd.notna(film['production_companies']) else 'Unknown',
+            #'production_countries': film['production_countries'] if pd.notna(film['production_countries']) else 'Unknown',
+            #'revenue': film['revenue'] if pd.notna(film['revenue']) else 'Unknown',
+            #'spoken_languages': film['spoken_languages'] if pd.notna(film['spoken_languages']) else 'Unknown',
+            #'status': film['status'] if pd.notna(film['status']) else 'Unknown',
+            #'tagline': film['tagline'] if pd.notna(film['tagline']) else 'Unknown',
+            #'video': film['video'] if pd.notna(film['video']) else 'Unknown' 
+    }
+
 def find_films(query, limit=50):
     query = query.strip()
     if not query:
@@ -20,22 +66,11 @@ def find_films(query, limit=50):
 
     filter_title = df['title'].fillna('').str.contains(query, case=False, na=False)
     filter_original_title = df['original_title'].fillna('').str.contains(query, case=False, na=False)
-    result_df = df[filter_title | filter_original_title].sort_values('vote_average', ascending=False).head(limit)
+    result_df = df[filter_title | filter_original_title].sort_values('vote_average', ascending=False)
+    if limit is not None:
+        result_df = result_df.head(limit)
 
-    films = []
-    for _, film in result_df.iterrows():
-        films.append({
-            'titel': film['title'],
-            'rating': film['vote_average'],
-            'aar': str(film['release_date'])[:4] if pd.notna(film['release_date']) else 'Unknown',
-            'plakat': film['poster_path'],
-            'genres': film['genres'] if pd.notna(film['genres']) else 'No genres available.',
-            'beskrivelse': film['overview'] if pd.notna(film['overview']) else 'No description available.',
-            'original_language': film['original_language'] if pd.notna(film['original_language']) else 'Unknown',
-            'homepage': film['homepage'] if pd.notna(film['homepage']) and film['homepage'] != '' else None,
-            'runtime': int(film['runtime']) if pd.notna(film['runtime']) else 'Unknown'
-        })
-
+    films = [movie_dict(film) for _, film in result_df.iterrows()]
     return films
 
 @app.route('/')
@@ -64,36 +99,7 @@ def forside(page=1):
     filmliste = alle_film.iloc[start_idx:end_idx]
 
     # Byg en liste af dictionaries som HTML-skabelonen kan bruge
-    film_data = []
-    for _, film in filmliste.iterrows():
-        film_data.append({
-            'titel': film['title'],
-            'rating': film['vote_average'],
-            'aar': str(film['release_date'])[:4] if pd.notna(film['release_date']) else 'Unknown',
-            'plakat': film['poster_path'],
-            'genres': film['genres'] if pd.notna(film['genres']) else 'No genres available.',
-            
-            'beskrivelse': film['overview'] if pd.notna(film['overview']) else 'No description available.',
-            'original_language': film['original_language'] if pd.notna(film['original_language']) else 'Unknown',
-            'homepage': film['homepage'] if pd.notna(film['homepage']) and film['homepage'] != '' else None,
-            'runtime': int(film['runtime']) if pd.notna(film['runtime']) else 'Unknown',
-
-            #'adult': film['adult'] if pd.notna(film['adult']) else 'Unknown',
-            #'collection': film['belongs_to_collection'] if pd.notna(film['belongs_to_collection']) else 'Unknown',
-            #'budget': film['budget'] if pd.notna(film['budget']) else 'Unknown',
-            #'id': film['id'] if pd.notna(film['id']) else 'Unknown',
-            #imdb_id': film['imdb_id'] if pd.notna(film['imdb_id']) else 'Unknown',
-            #'original_title': film['original_title'] if pd.notna(film['original_title']) else 'Unknown',
-            #'popularity': film['popularity'] if pd.notna(film['popularity']) else 'Unknown',
-            #'production_companies': film['production_companies'] if pd.notna(film['production_companies']) else 'Unknown',
-            #'production_countries': film['production_countries'] if pd.notna(film['production_countries']) else 'Unknown',
-            #'revenue': film['revenue'] if pd.notna(film['revenue']) else 'Unknown',
-            #'spoken_languages': film['spoken_languages'] if pd.notna(film['spoken_languages']) else 'Unknown',
-            #'status': film['status'] if pd.notna(film['status']) else 'Unknown',
-            #'tagline': film['tagline'] if pd.notna(film['tagline']) else 'Unknown',
-            #'video': film['video'] if pd.notna(film['video']) else 'Unknown'
-        })
-
+    film_data = [movie_dict(film) for _, film in filmliste.iterrows()]
     return render_template('index.html', film=film_data, current_page=page, total_pages=total_pages)
 
 @app.route('/gem/<titel>')
@@ -107,7 +113,7 @@ def gem(titel):
         aar=str(film['release_date'])[:4],
         original_language=film['original_language'] if pd.notna(film['original_language']) else 'Unknown',
         runtime=int(film['runtime']) if pd.notna(film['runtime']) else 'Unknown',
-        genres=film['genres'] if pd.notna(film['genres']) else 'No genres available.',
+        genres=parse_genres(film['genres']),
         beskrivelse=film['overview'] if pd.notna(film['overview']) else 'No description available.',
         homepage=film['homepage'] if pd.notna(film['homepage']) and film['homepage'] != '' else None
     )
@@ -124,7 +130,7 @@ def api_search_html():
     if not query:
         return '<p class="message">Indtast venligst en søgeterm.</p>'
 
-    films = find_films(query)
+    films = find_films(query, limit=20)
     if not films:
         return '<p class="message">Ingen film fundet.</p>'
 
@@ -143,8 +149,23 @@ def fjern(titel):
 @app.route('/søg')
 def søg():
     query = request.args.get('query', '').strip()
-    films = find_films(query) if query else None
-    return render_template('søg.html', film=films, query=query)
+    page = request.args.get('page', default=1, type=int)
+    films = []
+    total_pages = 0
+    if query:
+        all_results = find_films(query, limit=None)
+        films_per_page = 20
+        total_results = len(all_results)
+        total_pages = (total_results + films_per_page - 1) // films_per_page
+        if page < 1:
+            page = 1
+        if page > total_pages and total_pages > 0:
+            page = total_pages
+        start_idx = (page - 1) * films_per_page
+        end_idx = start_idx + films_per_page
+        films = all_results[start_idx:end_idx]
+
+    return render_template('søg.html', film=films, query=query, current_page=page, total_pages=total_pages)
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)

@@ -11,6 +11,7 @@
 
 <body>
     <h1>Søg efter film</h1>
+    <p class="mine-favoritter"><a href="/">Tilbage til forsiden</a></p>
     <form class="search-container" method="get" action="/søg">
         <input type="text" id="searchInput" name="query" value="{{ query | default('') }}"
             placeholder="Indtast filmtitel...">
@@ -25,11 +26,85 @@
             {% include 'film_card.html' %}
             {% endfor %}
         </div>
+
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if current_page > 1 %}
+            <a href="/søg?query={{ query | urlencode }}&page={{ current_page - 1 }}" class="page-link">
+                < Forrige</a>
+                    {% endif %}
+
+                    {% set start_page = [1, current_page - 4] | max %}
+                    {% set end_page = [start_page + 8, total_pages] | min %}
+                    {% set start_page = [1, end_page - 8] | max %}
+
+                    {% if start_page > 1 %}
+                    <span class="page-ellipsis">...</span>
+                    {% endif %}
+
+                    {% for page_num in range(start_page, end_page + 1) %}
+                    {% if page_num == current_page %}
+                    <span class="page-number active">{{ page_num }}</span>
+                    {% else %}
+                    <a href="/søg?query={{ query | urlencode }}&page={{ page_num }}" class="page-number">{{ page_num
+                        }}</a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if end_page < total_pages %} <span class="page-ellipsis">...</span>
+                        {% endif %}
+
+                        {% if current_page < total_pages %} <a
+                            href="/søg?query={{ query | urlencode }}&page={{ current_page + 1 }}" class="page-link">
+                            Næste >
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
         {% else %}
         <p class="message">Ingen film fundet.</p>
         {% endif %}
         {% endif %}
     </div>
 </body>
+
+<!-- JavaScript-kode for søgefunktionalitet -->
+<script>
+    const filmGrid = document.getElementById('filmGrid');
+    const searchInput = document.getElementById('searchInput');
+    const pagination = document.querySelector('.pagination');
+
+    function setSearchMode(active) {
+        if (!pagination) return;
+        pagination.style.display = active ? 'none' : '';
+    }
+
+    searchInput.addEventListener('input', function () {
+        if (!this.value.trim()) {
+            document.getElementById('results').innerHTML = '';
+            filmGrid.style.display = '';
+            setSearchMode(false);
+        }
+    });
+
+    searchInput.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            search();
+        }
+    });
+
+    // Funktion til at søge efter film
+    function search() {
+        const query = document.getElementById('searchInput').value.trim();
+        if (!query) {
+            document.getElementById('results').innerHTML = '<p class="message"></p>';
+            filmGrid.style.display = '';
+            setSearchMode(false);
+            return;
+        }
+        window.location.href = `/søg?query=${encodeURIComponent(query)}`;
+    }
+</script>
 
 </html>
