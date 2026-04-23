@@ -7,6 +7,7 @@
                 <p class="meta"> Year: {{ f.aar }} ✦ Original Language: {{ f.original_language }} ✦ Runtime: {{ f.runtime }} min</p>
             </div>
             <p class="description">{{ f.beskrivelse }}</p>
+            <button type="button" class="toggle-description" onclick="toggleDescription(this)">Se mere</button>
             <p class="meta"> Genres: {{ f.genres }}</p>
             <p class="rating"> Rating: {{ f.rating }}/10 ⭐</p>
 
@@ -22,3 +23,49 @@
         </div>
     </div>
 </div>
+
+<script>
+    if (typeof window.toggleDescription !== 'function') {
+        window.toggleDescription = function(button) {
+            const description = button.previousElementSibling;
+            if (!description || !description.classList.contains('description')) return;
+
+            const expanded = description.classList.toggle('expanded');
+            button.innerText = expanded ? 'Se mindre' : 'Se mere';
+        };
+
+        // Check and hide buttons for descriptions that don't overflow
+        function checkDescriptionOverflow() {
+            const descriptions = document.querySelectorAll('.description');
+            descriptions.forEach(desc => {
+                const button = desc.nextElementSibling;
+                if (button && button.classList.contains('toggle-description')) {
+                    // Temporarily remove clamp to measure full height
+                    const originalDisplay = desc.style.display;
+                    const originalClamp = desc.style.webkitLineClamp;
+                    desc.style.display = 'block';
+                    desc.style.webkitLineClamp = 'unset';
+                    
+                    const fullHeight = desc.scrollHeight;
+                    const lineHeight = parseFloat(getComputedStyle(desc).lineHeight) || 20; // fallback
+                    const maxHeight = lineHeight * 3;
+                    
+                    if (fullHeight <= maxHeight + 1) { // small tolerance
+                        button.style.display = 'none';
+                    }
+                    
+                    // Restore styles
+                    desc.style.display = originalDisplay;
+                    desc.style.webkitLineClamp = originalClamp;
+                }
+            });
+        }
+
+        // Run check after DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', checkDescriptionOverflow);
+        } else {
+            checkDescriptionOverflow();
+        }
+    }
+</script>

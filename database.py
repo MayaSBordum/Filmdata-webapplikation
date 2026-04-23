@@ -1,4 +1,24 @@
 import sqlite3
+import ast
+import json
+import pandas as pd
+
+def parse_genres(genres_str):
+    """Parse genres field and return comma-separated names."""
+    if not pd.notna(genres_str) or genres_str == '':
+        return 'No genres available.'
+    genres_list = None
+    try:
+        genres_list = ast.literal_eval(genres_str)
+    except Exception:
+        try:
+            genres_list = json.loads(genres_str)
+        except Exception:
+            return 'No genres available.'
+    if not isinstance(genres_list, list):
+        return 'No genres available.'
+    genre_names = [g.get('name') for g in genres_list if isinstance(g, dict) and 'name' in g]
+    return ', '.join(genre_names) if genre_names else 'No genres available.'
 
 def get_connection():
     """Returnerer en forbindelse til databasen."""
@@ -21,6 +41,11 @@ def opret_tabel():
                     homepage TEXT
                     )
                     ''')
+    # Add genres column if it doesn't exist (for existing tables)
+    try:
+        con.execute('ALTER TABLE favoritter ADD COLUMN genres TEXT DEFAULT "No genres available."')
+    except sqlite3.OperationalError:
+        pass  # Column already exists
     con.commit()
     con.close()
 
@@ -49,4 +74,12 @@ def hent_favoritter():
     con = get_connection()
     rows = con.execute('SELECT * FROM favoritter').fetchall()
     con.close()
-    return rows
+    # Parse genres if it's raw JSON-like string
+    parsed_rows = []
+    for row in rows:
+        row_list = list(row)
+        genres = row_list[7]  # genres is at index 7
+        if genres and genres.startswith('['):
+            row_list[7] = parse_genres(genres)
+        parsed_rows.append(tuple(row_list))
+    return parsed_rows
