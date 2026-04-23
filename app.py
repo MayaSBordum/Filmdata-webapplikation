@@ -12,6 +12,8 @@ from database import opret_tabel, gem_favorit, hent_favoritter, fjern_favorit, p
 
 # Kald dette én gang når appen starter
 opret_tabel()
+favoritter = {}
+
 
 def movie_dict(film):
     """Return a reusable film dictionary from a dataframe row."""
@@ -136,11 +138,17 @@ def forside(page=1):
 
 @app.route('/gem/<titel>')
 def gem(titel):
-    # Check if already saved
-    if er_favorit(titel):   # ← you need this function
+    # Check om den er gemt
+    if er_favorit(titel):
         return "Allerede gemt", 409
-    # Find filmen i CSV-filen
-    film = df[df['title'] == titel].iloc[0]
+    
+     # Find filmen sikkert
+    film_match = df[df['title'] == titel]
+    if film_match.empty:
+        return "Film ikke fundet", 404
+
+    film = film_match.iloc[0]
+    
     gem_favorit(
         titel=film['title'],
         plakat_url=film['poster_path'],
@@ -152,12 +160,16 @@ def gem(titel):
         beskrivelse=film['overview'] if pd.notna(film['overview']) else 'No description available.',
         homepage=film['homepage'] if pd.notna(film['homepage']) and film['homepage'] != '' else None
     )
-    return f'{titel} er gemt som favorit!'
+    return f'{titel} er gemt som favorit!', 200
+
+def er_favorit(titel):
+    favoritter = hent_favoritter()
+    return any(f[1] == titel for f in favoritter)
 
 @app.route('/favoritter')
 def vis_favoritter():
     film = hent_favoritter()
-    return render_template('favoritter.html', film=film)
+    return render_template('favoritter.html', film=film, favoritter=favoritter)
 
 @app.route('/api/search/html')
 def api_search_html():
@@ -180,6 +192,20 @@ def fjern(titel):
     print("Fjerner:", titel)
     fjern_favorit(titel)
     return '', 200
+
+@app.route("/gem", methods=["POST"])
+def gem_favorit():
+    data = request.get_json()
+    titel = data.get("titel")
+    note = data.get("note")
+
+    # eksempel: gem i liste/dictionary
+    if titel in favoritter:
+        return "", 409
+
+    favoritter[titel] = note  # gem note sammen med titel
+
+    return "", 200
 
 @app.route('/søg')
 def søg():

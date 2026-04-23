@@ -127,6 +127,36 @@ h1 {
 }
 
 
+.note-input {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 100%;
+    min-height: 70px;
+    border-color: #6d0d0d;
+}
+
+.note-input button {
+    background-color: #05344a;
+    color: rgb(204, 204, 204);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+.note-input button:hover {
+    background-color: #0b4a68;
+    transform: translateY(-1px);
+}
+
+
 /* Links på sidden */
 .top-link {
     float: right;

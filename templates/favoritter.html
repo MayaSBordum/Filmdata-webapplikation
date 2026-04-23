@@ -41,9 +41,21 @@
                         </a>
                     </p>
                     {% endif %}
+                    <p class="note-input">
+                        <textarea class="note-input" placeholder="Tilføj note..."></textarea>
 
+                        <button onclick='gemFavoritMedNote(this, "{{ f[1] }}")'>
+                            ★ Gem note
+                        </button>
+                    </p>
+                    {% for titel, note in favoritter.items() %}
+                    <h3>{{ titel }}</h3>
+                    {% if note %}
+                    <p>📝 {{ note }}</p>
+                    {% endif %}
+                    {% endfor %}
                     <p class="gem-favorite-link">
-                        <button onclick="fjernFavorit(event, '{{ f[1] }}')">
+                        <button onclick='fjernFavorit(event, "{{ f[1] }}")'>
                             ❌ Fjern fra favoritter
                         </button>
                     </p>
@@ -87,6 +99,33 @@
 
             const expanded = description.classList.toggle('expanded');
             button.innerText = expanded ? 'Se mindre' : 'Se mere';
+        }
+
+        function gemFavoritMedNote(button, titel) {
+            const container = button.closest('.info');
+            const noteInput = container.querySelector('.note-input');
+            const note = noteInput.value;
+
+            fetch(`/gem`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    titel: titel,
+                    note: note
+                })
+            })
+                .then(response => {
+                    if (response.status === 409) {
+                        showToast("Filmen er allerede i favoritter ⭐");
+                    } else if (response.ok) {
+                        showToast("Gemt note ⭐");
+                        noteInput.value = ""; // ryd felt
+                    } else {
+                        showToast("Noget gik galt ❌");
+                    }
+                });
         }
     </script>
 </body>
