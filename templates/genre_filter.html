@@ -1,0 +1,19 @@
+<!-- Genre filter -->
+<div class="genre-filter">
+    <h3>Filter by Genres</h3>
+    <form id="genreForm" method="get">
+        <div class="genres-list">
+            {% for genre in all_genres %}
+                <div class="genre-item">
+                    <input type="checkbox" id="genre-{{ genre }}" name="genre" value="{{ genre }}"
+                           {% if genre in selected_genres %}checked{% endif %}>
+                    <label for="genre-{{ genre }}">{{ genre }}</label>
+                </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="filter-btn">Apply Filter</button>
+        {% if selected_genres %}
+            <a href="/" class="clear-filter">Clear All</a>
+        {% endif %}
+    </form>
+</div>

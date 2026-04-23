@@ -8,28 +8,10 @@ app = Flask(__name__)
 # Indlæs CSV én gang når appen starter
 df = pd.read_csv('movies_metadata.csv', low_memory=False)
 
-from database import opret_tabel, gem_favorit, hent_favoritter, fjern_favorit
+from database import opret_tabel, gem_favorit, hent_favoritter, fjern_favorit, parse_genres
 
 # Kald dette én gang når appen starter
 opret_tabel()
-
-def parse_genres(genres_str):
-    """Parse genres field and return comma-separated names."""
-    if not pd.notna(genres_str) or genres_str == '':
-        return 'No genres available.'
-    genres_list = None
-    try:
-        genres_list = ast.literal_eval(genres_str)
-    except Exception:
-        try:
-            genres_list = json.loads(genres_str)
-        except Exception:
-            return 'No genres available.'
-    if not isinstance(genres_list, list):
-        return 'No genres available.'
-    genre_names = [g.get('name') for g in genres_list if isinstance(g, dict) and 'name' in g]
-    return ', '.join(genre_names) if genre_names else 'No genres available.'
-
 
 def movie_dict(film):
     """Return a reusable film dictionary from a dataframe row."""
@@ -73,14 +55,59 @@ def find_films(query, limit=50):
     films = [movie_dict(film) for _, film in result_df.iterrows()]
     return films
 
+def get_all_genres():
+    """Extract all unique genres from the dataset."""
+    all_genres = set()
+    for genres_str in df['genres'].dropna():
+        try:
+            genres_list = ast.literal_eval(genres_str)
+            if isinstance(genres_list, list):
+                for g in genres_list:
+                    if isinstance(g, dict) and 'name' in g:
+                        all_genres.add(g['name'])
+        except Exception:
+            try:
+                genres_list = json.loads(genres_str)
+                if isinstance(genres_list, list):
+                    for g in genres_list:
+                        if isinstance(g, dict) and 'name' in g:
+                            all_genres.add(g['name'])
+            except Exception:
+                pass
+    return sorted(list(all_genres))
+
 @app.route('/')
 @app.route('/<int:page>')
 def forside(page=1):
+    # Get genre filter from query parameters
+    selected_genres = request.args.getlist('genre')
+    
     # Filtrer rækker med gyldige ratings og poster_path, sorter
     alle_film = (
         df[(df['vote_average'] > 0) & (df['poster_path'].notna()) & (df['vote_count'] > 100)]
         .sort_values('vote_average', ascending=False)
     )
+    
+    # Apply genre filter if genres are selected
+    if selected_genres:
+        filtered_films = []
+        for _, film in alle_film.iterrows():
+            genres_str = film['genres']
+            try:
+                genres_list = ast.literal_eval(genres_str) if isinstance(genres_str, str) else genres_str
+            except Exception:
+                try:
+                    genres_list = json.loads(genres_str) if isinstance(genres_str, str) else genres_str
+                except Exception:
+                    genres_list = []
+            
+            if isinstance(genres_list, list):
+                film_genres = [g.get('name') for g in genres_list if isinstance(g, dict) and 'name' in g]
+                # Check if any selected genre matches the film's genres
+                if any(genre in film_genres for genre in selected_genres):
+                    filtered_films.append(film)
+        
+        alle_film = pd.DataFrame(filtered_films)
     
     # Pagination settings
     films_per_page = 20
@@ -100,10 +127,18 @@ def forside(page=1):
 
     # Byg en liste af dictionaries som HTML-skabelonen kan bruge
     film_data = [movie_dict(film) for _, film in filmliste.iterrows()]
-    return render_template('index.html', film=film_data, current_page=page, total_pages=total_pages)
+    
+    # Get all genres for the filter
+    all_genres = get_all_genres()
+    
+    return render_template('index.html', film=film_data, current_page=page, total_pages=total_pages, 
+                         all_genres=all_genres, selected_genres=selected_genres)
 
 @app.route('/gem/<titel>')
 def gem(titel):
+    # Check if already saved
+    if er_favorit(titel):   # ← you need this function
+        return "Allerede gemt", 409
     # Find filmen i CSV-filen
     film = df[df['title'] == titel].iloc[0]
     gem_favorit(
@@ -166,6 +201,37 @@ def søg():
         films = all_results[start_idx:end_idx]
 
     return render_template('søg.html', film=films, query=query, current_page=page, total_pages=total_pages)
+
+@app.route('/genrer')
+def genrer():
+    """Display all genres."""
+    all_genres = get_all_genres()
+    return render_template('genre_filter.html', all_genres=all_genres, selected_genres=[])
+
+@app.route('/filter/genre/<genre>')
+def filter_by_genre(genre):
+    """Filter movies by genre."""
+    movies_with_genre = []
+    
+    for _, film in df.iterrows():
+        genres_str = film['genres']
+        try:
+            genres_list = ast.literal_eval(genres_str) if isinstance(genres_str, str) else genres_str
+        except Exception:
+            try:
+                genres_list = json.loads(genres_str) if isinstance(genres_str, str) else genres_str
+            except Exception:
+                genres_list = []
+        
+        if isinstance(genres_list, list):
+            for g in genres_list:
+                if isinstance(g, dict) and g.get('name') == genre:
+                    movies_with_genre.append(movie_dict(film))
+                    break
+    
+    # Sort by rating
+    movies_with_genre.sort(key=lambda x: x['rating'], reverse=True)
+    return render_template('genre_results.html', films=movies_with_genre, genre=genre)
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)

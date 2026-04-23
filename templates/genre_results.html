@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang='da'>
+
+<head>
+    <meta charset='UTF-8'>
+    <title>FilmData - {{ genre }}</title>
+    <link rel='stylesheet' href='/static/style.css'>
+</head>
+
+<body>
+    <h1>Films in Genre: {{ genre }}</h1>
+
+    <!-- Back link -->
+    <p class="back-link"><a href="/">← Back to Home</a></p>
+
+    <!-- Link til favoritter-siden -->
+    <p class="mine-favoritter"><a href="/favoritter">Gå til favoritter</a></p>
+
+    <!-- Grid with filtered movies -->
+    <div id="filmGrid" class='film-grid'>
+        {% if films %}
+            {% for f in films %}
+            {% include 'film_card.html' %}
+            {% endfor %}
+        {% else %}
+            <p class="message">No movies found in this genre.</p>
+        {% endif %}
+    </div>
+
+    <!-- Link back to top -->
+    <p class="top-link"><a href="#top">Tilbage til toppen</a></p>
+
+    <!-- Toast message -->
+    <div id="toast" class="toast"></div>
+
+    <!-- JavaScript for favorites functionality -->
+    <script>
+        function gemFavorit(titel) {
+            fetch(`/gem/${encodeURIComponent(titel)}`)
+                .then(response => {
+                    if (response.ok) {
+                        showToast("Gemt som favorit ⭐");
+                    } else {
+                        showToast("Noget gik galt ❌");
+                    }
+                });
+        }
+
+        // Function to show toast message
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.classList.add("show");
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

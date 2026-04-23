@@ -8,6 +8,7 @@
 </head>
 
 <!-- Film layout -->
+
 <body>
     <h1>Films to watch</h1>
 
@@ -20,6 +21,26 @@
         <button type="submit">Søg</button>
     </form>
 
+    <!-- Genre filter -->
+    <div class="genre-filter">
+        <h3>Filter by Genres</h3>
+        <form id="genreForm" method="get">
+            <div class="genres-list">
+                {% for genre in all_genres %}
+                <div class="genre-item">
+                    <input type="checkbox" id="genre-{{ genre }}" name="genre" value="{{ genre }}" {% if genre in
+                        selected_genres %}checked{% endif %}>
+                    <label for="genre-{{ genre }}">{{ genre }}</label>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="filter-btn">Apply Filter</button>
+            {% if selected_genres %}
+            <a href="/" class="clear-filter">Clear All</a>
+            {% endif %}
+        </form>
+    </div>
+
     <!-- Grid med film-kort, der viser de bedste film -->
     <div id="filmGrid" class='film-grid'>
         {% for f in film %}
@@ -30,9 +51,12 @@
     <!-- Pagination -->
     {% if total_pages > 1 %}
     <div class="pagination">
+        {% set genre_params = selected_genres | join('&genre=') %}
+        {% set genre_query = '?' + 'genre=' + genre_params if genre_params else '' %}
+
         {% if current_page > 1 %}
-        <a href="/" class="page-link">« Første</a>
-        <a href="/{{ current_page - 1 }}" class="page-link">
+        <a href="/{{ genre_query }}" class="page-link">« Første</a>
+        <a href="/{{ current_page - 1 }}{{ genre_query }}" class="page-link">
             < Forrige</a>
                 {% endif %}
 
@@ -48,16 +72,17 @@
                 {% if page_num == current_page %}
                 <span class="page-number active">{{ page_num }}</span>
                 {% else %}
-                <a href="/{{ page_num }}" class="page-number">{{ page_num }}</a>
+                <a href="/{{ page_num }}{{ genre_query }}" class="page-number">{{ page_num }}</a>
                 {% endif %}
                 {% endfor %}
 
                 {% if end_page < total_pages %} <span class="page-ellipsis">...</span>
                     {% endif %}
 
-                    {% if current_page < total_pages %} <a href="/{{ current_page + 1 }}" class="page-link">Næste >
+                    {% if current_page < total_pages %} <a href="/{{ current_page + 1 }}{{ genre_query }}"
+                        class="page-link">Næste >
         </a>
-        <a href="/{{ total_pages }}" class="page-link">Sidste »</a>
+        <a href="/{{ total_pages }}{{ genre_query }}" class="page-link">Sidste »</a>
         {% endif %}
     </div>
     {% endif %}
@@ -72,7 +97,9 @@
         function gemFavorit(titel) {
             fetch(`/gem/${encodeURIComponent(titel)}`)
                 .then(response => {
-                    if (response.ok) {
+                    if (response.status === 409) {
+                        showToast("Filmen er allerede i favoritter ⭐");
+                    } else if (response.ok) {
                         showToast("Gemt som favorit ⭐");
                     } else {
                         showToast("Noget gik galt ❌");
