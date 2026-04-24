@@ -41,19 +41,19 @@
                         </a>
                     </p>
                     {% endif %}
-                    <p class="note-input">
-                        <textarea class="note-input" placeholder="Tilføj note..."></textarea>
+                    <p class="note-container">
+                        <textarea class="note-input" placeholder="Rediger note...">{{ f[10] or '' }}</textarea>
 
+                        <p class="note-input button">
                         <button onclick='gemFavoritMedNote(this, "{{ f[1] }}")'>
-                            ★ Gem note
+                            💾 Gem
                         </button>
+
+                        <button onclick="annullerNote(this)">
+                            ❌ Annuller
+                        </button>
+                        </p>
                     </p>
-                    {% for titel, note in favoritter.items() %}
-                    <h3>{{ titel }}</h3>
-                    {% if note %}
-                    <p>📝 {{ note }}</p>
-                    {% endif %}
-                    {% endfor %}
                     <p class="gem-favorite-link">
                         <button onclick='fjernFavorit(event, "{{ f[1] }}")'>
                             ❌ Fjern fra favoritter
@@ -106,7 +106,7 @@
             const noteInput = container.querySelector('.note-input');
             const note = noteInput.value;
 
-            fetch(`/gem`, {
+            fetch(`/gem_note`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -117,16 +117,38 @@
                 })
             })
                 .then(response => {
-                    if (response.status === 409) {
-                        showToast("Filmen er allerede i favoritter ⭐");
-                    } else if (response.ok) {
+                    if (response.ok) {
                         showToast("Gemt note ⭐");
-                        noteInput.value = ""; // ryd felt
+
+                        // farve efter gem
+                        noteInput.style.borderColor = "green";
+
+                        // gem original værdi til annuller
+                        container.dataset.originalNote = note;
+
                     } else {
                         showToast("Noget gik galt ❌");
                     }
                 });
         }
+
+
+        function annullerNote(button) {
+            const container = button.closest('.info');
+            const textarea = container.querySelector('.note-input');
+            textarea.value = container.dataset.originalNote || "";
+            textarea.style.borderColor = "red";
+        }
+
+        document.querySelectorAll('.info').forEach(container => {
+            const textarea = container.querySelector('.note-input');
+            container.dataset.originalNote = textarea.value;
+
+            textarea.addEventListener("input", () => {
+                textarea.style.borderColor = "orange";
+            });
+        });
+
     </script>
 </body>
 

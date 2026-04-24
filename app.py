@@ -195,17 +195,15 @@ def fjern(titel):
     fjern_favorit(titel)
     return '', 200
 
-@app.route("/gem", methods=["POST"])
-def gem_favorit():
+@app.route("/gem_note", methods=["POST"])
+def gem_note():
     data = request.get_json()
     titel = data.get("titel")
     note = data.get("note")
 
-    # eksempel: gem i liste/dictionary
-    if titel in favoritter:
-        return "", 409
-
-    favoritter[titel] = note  # gem note sammen med titel
+    # HER skal du lave en database update
+    from database import opdater_note
+    opdater_note(titel, note)
 
     return "", 200
 

@@ -25,9 +25,11 @@ def get_connection():
     return sqlite3.connect('favoritter.db')
 
 def opret_tabel():
+    conn = sqlite3.connect("favoritter.db")
+    cur = conn.cursor()
     """Opretter tabellen hvis den ikke allerede findes."""
     con = get_connection()
-    con.execute('''
+    cur.execute('''
                 CREATE TABLE IF NOT EXISTS favoritter (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     titel TEXT NOT NULL,
@@ -38,23 +40,17 @@ def opret_tabel():
                     runtime INTEGER,
                     genres TEXT,
                     beskrivelse TEXT,
-                    homepage TEXT
+                    homepage TEXT,
+                    note TEXT
                     )
                     ''')
-    # Add genres column if it doesn't exist (for existing tables)
-    try:
-        con.execute('ALTER TABLE favoritter ADD COLUMN genres TEXT DEFAULT "No genres available."')
-    except sqlite3.OperationalError:
-        pass  # Column already exists
-    con.commit()
-    con.close()
 
-def gem_favorit(titel, plakat_url, rating, aar, original_language, runtime, genres, beskrivelse, homepage):
+def gem_favorit(titel, plakat_url, rating, aar, original_language, runtime, genres, beskrivelse, homepage, note=None):
     """Gemmer en film som favorit."""
     con = get_connection()
     con.execute(
-        'INSERT INTO favoritter (titel, plakat_url, rating, aar, original_language, runtime, genres, beskrivelse, homepage) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        (titel, plakat_url, rating, aar, original_language, runtime, genres, beskrivelse, homepage)
+        'INSERT INTO favoritter (titel, plakat_url, rating, aar, original_language, runtime, genres, beskrivelse, homepage, note) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        (titel, plakat_url, rating, aar, original_language, runtime, genres, beskrivelse, homepage, note)
         )
     con.commit()
     con.close()
@@ -83,3 +79,10 @@ def hent_favoritter():
             row_list[7] = parse_genres(genres)
         parsed_rows.append(tuple(row_list))
     return parsed_rows
+
+def opdater_note(titel, note):
+    conn = sqlite3.connect("favoritter.db")
+    cur = conn.cursor()
+    cur.execute("UPDATE favoritter SET note=? WHERE titel=?", (note, titel))
+    conn.commit()
+    conn.close()

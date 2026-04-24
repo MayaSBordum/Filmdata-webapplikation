@@ -15,7 +15,7 @@
 
     /* Accent colors */
     --accent-primary: #b6253d;
-    --accent-primary-border: rgba(169, 33, 56, 0.4);
+    --accent-primary-border: rgb(143, 28, 47);
     --accent-primary-soft: rgba(182, 37, 61, 0.1);
     --accent-primary-hover: rgba(182, 37, 61, 0.3);
 
@@ -177,6 +177,13 @@ h1 {
     transform: translateY(-1px);
 }
 
+.note-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-small);
+    margin-top: var(--gap-default);
+}
+
 .note-input {
     text-align: left;
     display: flex;
@@ -184,7 +191,8 @@ h1 {
     justify-content: space-between;
     max-width: 100%;
     min-height: 70px;
-    border-color: #6d0d0d;
+    border-color: var(--accent-primary-border);
+    border-width: var(--radius-sm);
 }
 
 
@@ -317,7 +325,7 @@ input {
 
 .genres-list.expanded {
     max-height: 500px;
-    gap: 2px;
+    gap: var(--gap-default);
 }
 
 .genre-item {
