@@ -21,10 +21,10 @@
         <button type="submit">Søg</button>
     </form>
 
-    <!-- Genre filter -->
-    <div class="genre-filter">
-        <h3>Filter Genre</h3>
-        <form id="genreForm" method="get">
+    <!-- Genre filter  -->
+    <form id="genreForm" method="get">
+
+        <div class="genre-row">
             <div class="genres-list collapsed" id="genresList">
                 {% for genre in all_genres %}
                 <div class="genre-item">
@@ -34,13 +34,16 @@
                 </div>
                 {% endfor %}
             </div>
-            <button type="button" id="toggleGenresBtn" onclick="toggleGenres()">Se flere</button>
-            <button type="submit" class="filter-btn">Tilføj Filter</button>
-            {% if selected_genres %}
-            <a href="/" class="clear-filter">Ryd alle</a>
-            {% endif %}
-        </form>
-    </div>
+
+            <button type="button" class="toggle-description" id="toggleGenresBtn" onclick="toggleGenres()">
+                Se flere
+            </button>
+        </div>
+        <button type="submit" class="filter-btn">Tilføj Filter</button>
+        {% if selected_genres %}
+        <a href="/" class="clear-filter">Ryd alle</a>
+        {% endif %}
+    </form>
 
     <!-- Grid med film-kort, der viser de bedste film -->
     <div id="filmGrid" class='film-grid'>
