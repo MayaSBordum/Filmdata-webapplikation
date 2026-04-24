@@ -23,9 +23,9 @@
 
     <!-- Genre filter -->
     <div class="genre-filter">
-        <h3>Filter by Genres</h3>
+        <h3>Filter Genre</h3>
         <form id="genreForm" method="get">
-            <div class="genres-list">
+            <div class="genres-list collapsed" id="genresList">
                 {% for genre in all_genres %}
                 <div class="genre-item">
                     <input type="checkbox" id="genre-{{ genre }}" name="genre" value="{{ genre }}" {% if genre in
@@ -34,9 +34,10 @@
                 </div>
                 {% endfor %}
             </div>
-            <button type="submit" class="filter-btn">Apply Filter</button>
+            <button type="button" id="toggleGenresBtn" onclick="toggleGenres()">Se flere</button>
+            <button type="submit" class="filter-btn">Tilføj Filter</button>
             {% if selected_genres %}
-            <a href="/" class="clear-filter">Clear All</a>
+            <a href="/" class="clear-filter">Ryd alle</a>
             {% endif %}
         </form>
     </div>
@@ -116,6 +117,21 @@
             setTimeout(() => {
                 toast.classList.remove("show");
             }, 3000);
+        }
+
+
+        // Funktion til at vise flere genrer
+        function toggleGenres() {
+            const list = document.getElementById("genresList");
+            const btn = document.getElementById("toggleGenresBtn");
+
+            list.classList.toggle("expanded");
+
+            if (list.classList.contains("expanded")) {
+                btn.innerText = "Se mindre";
+            } else {
+                btn.innerText = "Se flere";
+            }
         }
     </script>
 </body>

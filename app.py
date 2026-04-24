@@ -58,25 +58,27 @@ def find_films(query, limit=50):
     return films
 
 def get_all_genres():
-    """Extract all unique genres from the dataset."""
-    all_genres = set()
+    """Extract all genres and sort by most common."""
+    genre_count = {}
+
     for genres_str in df['genres'].dropna():
         try:
             genres_list = ast.literal_eval(genres_str)
-            if isinstance(genres_list, list):
-                for g in genres_list:
-                    if isinstance(g, dict) and 'name' in g:
-                        all_genres.add(g['name'])
         except Exception:
             try:
                 genres_list = json.loads(genres_str)
-                if isinstance(genres_list, list):
-                    for g in genres_list:
-                        if isinstance(g, dict) and 'name' in g:
-                            all_genres.add(g['name'])
             except Exception:
-                pass
-    return sorted(list(all_genres))
+                genres_list = []
+
+        if isinstance(genres_list, list):
+            for g in genres_list:
+                if isinstance(g, dict) and 'name' in g:
+                    name = g['name']
+                    genre_count[name] = genre_count.get(name, 0) + 1
+
+    # Sort by count (descending)
+    sorted_genres = sorted(genre_count, key=genre_count.get, reverse=True)
+    return sorted_genres
 
 @app.route('/')
 @app.route('/<int:page>')
@@ -227,12 +229,6 @@ def søg():
         films = all_results[start_idx:end_idx]
 
     return render_template('søg.html', film=films, query=query, current_page=page, total_pages=total_pages)
-
-@app.route('/genrer')
-def genrer():
-    """Display all genres."""
-    all_genres = get_all_genres()
-    return render_template('genre_filter.html', all_genres=all_genres, selected_genres=[])
 
 @app.route('/filter/genre/<genre>')
 def filter_by_genre(genre):

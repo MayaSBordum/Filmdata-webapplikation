@@ -1,35 +1,100 @@
-/* Layout */
+/* =========================
+   ROOT VARIABLES
+========================= */
+:root {
+    /* Backgrounds */
+    --bg-main: linear-gradient(135deg, #1a1a2e, #16213e);
+    --bg-card: rgba(255, 255, 255, 0.03);
+    --bg-glass: rgba(255, 255, 255, 0.05);
+
+    /* Text colors */
+    --text-main: #e0e0e0;
+    --text-title: #ffffff;
+    --text-data: #aaaaaa;
+    --text-description: #cfcfcf;
+
+    /* Accent colors */
+    --accent-primary: #b6253d;
+    --accent-primary-border: rgba(169, 33, 56, 0.4);
+    --accent-primary-soft: rgba(182, 37, 61, 0.1);
+    --accent-primary-hover: rgba(182, 37, 61, 0.3);
+
+    /* Misc colors */
+    --color-rating: #f5c518;
+    --color-link: #3990b9;
+    --color-toggle: #77b5e6;
+
+    /* Button colors */
+    --btn-main: #05344a;
+    --btn-main-hover: #0b4a68;
+    --btn-secondary: #0b719c;
+    --btn-secondary-hover: #0b8dcae3;
+
+    --btn-success: #218838;
+    --btn-success-hover: #28a745;
+    --btn-clear: #dc3545;
+
+    /* Button sizing */
+    --btn-padding-default: 10px 20px;
+    --btn-padding-compact: 8px 14px;
+
+    --btn-font-default: 16px;
+    --btn-font-compact: 0.85rem;
+
+    --btn-radius-default: 4px;
+    --btn-radius-compact: 8px;
+
+    /* Borders & radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+
+    /* Shadows */
+    --shadow-card: 0 10px 25px rgba(0, 0, 0, 0.4);
+    --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.3);
+    --shadow-img: 0 6px 15px rgba(0, 0, 0, 0.5);
+
+    /* Spacing */
+    --gap-default: 10px;
+    --gap-small: 2px;
+}
+
+/* =========================
+   BASE
+========================= */
 body {
     font-family: Georgia, serif;
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-    color: #e0e0e0;
+    background: var(--bg-main);
+    color: var(--text-main);
     margin: 0;
     padding: 2rem;
     line-height: 1.6;
 }
 
 h1 {
-    color: #b6253d;
+    color: var(--accent-primary);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 1.5rem;
-    border-bottom: 2px solid rgba(169, 33, 56, 0.4);
+    border-bottom: 2px solid var(--accent-primary-border);
     display: inline-block;
     padding-bottom: 0.3rem;
 }
 
+/* =========================
+   FILM CARD
+========================= */
 .film-kort {
     display: flex;
     gap: 2rem;
     max-width: 80%;
     margin: 2rem auto;
-    /* THIS centers it */
 
-    background-color: rgba(255, 255, 255, 0.03);
+    background-color: var(--bg-card);
     padding: 1.5rem;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     backdrop-filter: blur(6px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow-card);
 }
 
 .film-kort img {
@@ -37,12 +102,13 @@ h1 {
     aspect-ratio: 2 / 3;
     object-fit: cover;
     border-radius: 10px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-img);
     flex-shrink: 0;
 }
 
-
-/* Text container */
+/* =========================
+   TEXT CONTENT
+========================= */
 .info {
     display: flex;
     flex-direction: column;
@@ -52,20 +118,19 @@ h1 {
 
 .info h2 {
     margin: 0;
-    color: #ffffff;
+    color: var(--text-title);
 }
 
-
-/* Metadata (year, genre etc.) */
+/* Metadata */
 .meta {
     font-size: 0.9rem;
-    color: #aaaaaa;
+    color: var(--text-data);
     margin: 0.3rem 0 1rem 0;
 }
 
 .description {
     font-size: 0.95rem;
-    color: #cfcfcf;
+    color: var(--text-description);
     line-height: 1.5;
     margin-bottom: 0.5rem;
     display: -webkit-box;
@@ -82,7 +147,7 @@ h1 {
 .toggle-description {
     background: transparent;
     border: none;
-    color: #77b5e6;
+    color: var(--color-toggle);
     cursor: pointer;
     font-size: 0.9rem;
     padding: 0;
@@ -95,37 +160,22 @@ h1 {
 }
 
 .rating {
-    color: #f5c518;
+    color: var(--color-rating);
     font-weight: bold;
     font-size: 1rem;
 }
 
-
-/* Favorite */
+/* =========================
+    FAVORITE & NOTE
+========================= */
 .gem-favorite-link {
     text-align: right;
-    /* bedre end float */
-}
-
-.gem-favorite-link button {
-    background-color: #05344a;
-    color: rgb(204, 204, 204);
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: bold;
-    cursor: pointer;
-
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s ease;
 }
 
 .gem-favorite-link button:hover {
-    background-color: #0b4a68;
+    background-color: var(--btn-main-hover);
     transform: translateY(-1px);
 }
-
 
 .note-input {
     text-align: left;
@@ -137,31 +187,50 @@ h1 {
     border-color: #6d0d0d;
 }
 
-.note-input button {
-    background-color: #05344a;
-    color: rgb(204, 204, 204);
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: bold;
-    cursor: pointer;
-
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s ease;
-}
 
 .note-input button:hover {
-    background-color: #0b4a68;
+    background-color: var(--btn-main-hover);
     transform: translateY(-1px);
 }
 
+/* =========================
+   BUTTONS
+========================= */
+.gem-favorite-link button,
+.note-input button {
+    background-color: var(--btn-main);
+    color: var(--text-main);
+    border: none;
+    padding: var(--btn-padding-compact);
+    border-radius: var(--btn-radius-compact);
+    font-size: var(--btn-font-compact);
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.2s ease;
+}
 
-/* Links på sidden */
+button {
+    padding: var(--btn-padding-default);
+    background-color: var(--btn-secondary);
+    color: var(--text-main);
+    border: none;
+    border-radius: var(--btn-radius-default);
+    cursor: pointer;
+    /* font-size: var(--btn-font-default); */
+}
+
+button:hover {
+    background-color: var(--btn-secondary-hover);
+}
+
+/* =========================
+   LINKS
+========================= */
 .top-link {
     float: right;
     margin: 2rem auto;
-    color: #3990b9;
+    color: var(--color-link);
     font-weight: bold;
     font-size: 1rem;
 }
@@ -174,15 +243,16 @@ h1 {
     font-size: 1.2rem;
 }
 
-
-/* Toasts */
+/* =========================
+   TOAST
+========================= */
 .toast {
     visibility: hidden;
     min-width: 200px;
     background-color: #333;
-    color: #fff;
+    color: var(--text-title);
     text-align: center;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 12px;
 
     position: fixed;
@@ -200,11 +270,12 @@ h1 {
     opacity: 1;
 }
 
-
-/* Search */
+/* =========================
+   SEARCH
+========================= */
 .search-container {
     display: flex;
-    gap: 10px;
+    gap: var(--gap-default);
     margin-bottom: 20px;
 }
 
@@ -213,35 +284,23 @@ input {
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
 }
 
-button {
-    padding: 10px 20px;
-    background-color: #0b519c;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0b67ca;
-}
-
-
-/* Genre Filter */
+/* =========================
+   GENRE FILTER
+========================= */
 .genre-filter {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--bg-glass);
     padding: 10px;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     margin-bottom: 30px;
     backdrop-filter: blur(6px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-soft);
 }
 
 .genre-filter h3 {
-    color: #b6253d;
+    color: var(--accent-primary);
     margin-top: 0;
     margin-bottom: 5px;
     font-size: 1.2em;
@@ -250,8 +309,15 @@ button:hover {
 .genres-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 10px;
+    gap: var(--gap-default);
+    overflow: hidden;
+    max-height: 40px;
+    transition: max-height 0.3s ease;
+}
+
+.genres-list.expanded {
+    max-height: 500px;
+    gap: 2px;
 }
 
 .genre-item {
@@ -264,10 +330,10 @@ button:hover {
 }
 
 .genre-item label {
-    color: #e0e0e0;
+    color: var(--text-data);
     cursor: pointer;
     padding: 5px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     transition: background-color 0.3s;
 }
 
@@ -276,81 +342,66 @@ button:hover {
 }
 
 .filter-btn {
-    background-color: #28a745;
+    background-color: var(--btn-success);
     margin-right: 10px;
 }
 
 .filter-btn:hover {
-    background-color: #218838;
+    background-color: var(--btn-success-hover);
 }
 
 .clear-filter {
-    color: #dc3545;
+    color: var(--btn-clear);
     text-decoration: none;
     padding: 10px 15px;
-    border: 1px solid #dc3545;
-    border-radius: 4px;
+    border: 1px solid var(--btn-clear);
+    border-radius: var(--radius-sm);
     transition: background-color 0.3s;
 }
 
 .clear-filter:hover {
-    background-color: #dc3545;
+    background-color: var(--btn-clear);
     color: white;
 }
 
-/* Genre Filter Links (for /genrer page) */
-.genre-link {
-    display: inline-block;
-    padding: 8px 12px;
-    background-color: #667eea;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-.genre-link:hover {
-    background-color: #5568d3;
-}
-
-.results {
-    margin-top: 20px;
-}
-
-
-/* Pagination styling */
+/* =========================
+   PAGINATION
+========================= */
 .pagination {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: var(--gap-default);
     margin: 30px 0;
     flex-wrap: wrap;
 }
 
-.page-link, .page-number {
+.page-link,
+.page-number {
     padding: 8px 12px;
-    border: 1px solid #b6253d;
-    border-radius: 4px;
+    border: 1px solid var(--accent-primary);
+    border-radius: var(--radius-sm);
     text-decoration: none;
-    color: #e0e0e0;
+    color: var(--text-data);
     transition: all 0.3s ease;
-    background-color: rgba(182, 37, 61, 0.1);
+    background-color: var(--accent-primary-soft);
 }
 
-.page-link:hover, .page-number:hover {
-    background-color: rgba(182, 37, 61, 0.3);
-    border-color: #e0e0e0;
+.page-link:hover,
+.page-number:hover {
+    background-color: var(--accent-primary-hover);
+    border-color: var(--text-main);
+    color: var(--text-main);
 }
 
 .page-number.active {
-    background-color: #b6253d;
+    background-color: var(--accent-primary);
     color: white;
-    border-color: #b6253d;
+    border-color: var(--accent-primary);
     font-weight: bold;
 }
 
 .page-ellipsis {
     padding: 8px 5px;
-    color: #b6253d;
+    color: var(--accent-primary);
     font-weight: bold;
 }
